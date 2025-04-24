@@ -1,0 +1,54 @@
+@startuml UserService_Code
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+' для классов используем обычный PlantUML
+!pragma layout smetana
+
+package "Frameworks & Drivers" #DDDDDD {
+    interface HttpController
+    class GinUserController implements HttpController
+    GinUserController --> "request DTO" UserInJson
+    GinUserController --> "response DTO" UserOutJson
+}
+
+package "Interface Adapters" #D5E8D4 {
+    interface UserRepositoryPort
+    class PgUserRepository implements UserRepositoryPort
+    class UserDtoMapper
+    UserDtoMapper --> UserDomain
+    PgUserRepository --> "SQL driver" Pgx
+
+    GinUserController --> UserApplicationService
+    PgUserRepository ..> Pgx : uses
+}
+
+package "Use Cases" #FFE0B2 {
+    class UserApplicationService {
+        +register(cmd RegisterUserCmd): User
+        +changeEmail(cmd ChangeEmailCmd)
+    }
+    UserApplicationService ..> UserRepositoryPort
+    UserApplicationService ..> EmailNotifierPort
+}
+
+package "Entities" #FFF2CC {
+    class UserDomain {
+        -id: UUID
+        -email: Email
+        -status: Status
+        +changeEmail(newEmail)
+    }
+}
+
+'Ports in use‑case layer
+interface EmailNotifierPort
+EmailNotifierPort ..> SmtpAdapter
+
+'Concrete adapter in outer ring
+class SmtpAdapter implements EmailNotifierPort
+
+'Dependencies direction (always inward)
+PgUserRepository --> UserDomain
+UserApplicationService --> UserDomain
+GinUserController --> UserDtoMapper
+
+@enduml

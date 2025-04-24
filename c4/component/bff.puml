@@ -1,0 +1,47 @@
+@startuml BFF_Component_Diagram
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+'──────────────────── 1. Внешний клиент ────────────────────
+Person_Ext(mobileApp, "Mobile Application", "Flutter / iOS / Android")
+
+'──────────────────── 2. Граница контейнера BFF ─────────────
+Container_Boundary(bff, "BFF Client (Node.js/TS)") {
+
+    '── Controllers ──
+    Component(houseController,   "HouseController",   "REST API")
+    Component(userController,    "UserController",    "REST API")
+    Component(paymentController, "PaymentController", "REST API")
+
+    '── Services ──
+    Component(houseService,   "HouseService",   "Business logic")
+    Component(userService,    "UserService",    "Business logic")
+    Component(paymentService, "PaymentService", "Business logic")
+
+    '── Gateways ──
+    Component(houseGateway,   "HouseGateway",   "HTTP Client")
+    Component(userGateway,    "UserGateway",    "HTTP Client")
+    Component(paymentGateway, "PaymentGateway", "HTTP Client")
+
+    '── Внутренние связи ──
+    Rel(houseController,   houseService,   "calls")
+    Rel(userController,    userService,    "calls")
+    Rel(paymentController, paymentService, "calls")
+
+    Rel(houseService,   houseGateway,   "uses")
+    Rel(userService,    userGateway,    "uses")
+    Rel(paymentService, paymentGateway, "uses")
+}
+
+'──────────────────── 3. Внешние микросервисы ──────────────
+System_Ext(houseMs,   "House Microservice",   "Go • CRUD домов")
+System_Ext(userMs,    "User Microservice",    "Go • CRUD пользователей")
+System_Ext(paymentMs, "Payment Microservice", "Go • Платежи и история")
+
+'──────────────────── 4. Внешние связи ─────────────────────
+Rel(mobileApp, bff, "HTTPS / JSON")
+
+Rel(houseGateway,   houseMs,   "REST / gRPC")
+Rel(userGateway,    userMs,    "REST / gRPC")
+Rel(paymentGateway, paymentMs, "REST / gRPC")
+
+@enduml
