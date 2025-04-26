@@ -1,55 +1,29 @@
 @startuml
 !includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
 
-System_Boundary(smartHome, "SmartHome Ecosystem") {
+System_Boundary(smartHome, "SmartHome Ecosystem") {
 
   Container(bffClient,      "BFF Client",           "Node.js/TS",          "Координирует работу клиентских микросервисов")
-  Container(bffInstaller,   "BFF Installer",        "Node.js/TS",          "Координирует работу установочных микросервисов")
-
-  Container(iotGateway,     "IoT Gateway",          "MQTT / Custom",       "Получает данные от устройств")
-  Container(messageQueue,   "Message Queue",        "Kafka / MQTT",        "Асинхронная очередь телеметрии")
-
-  Container(temperatureTelemetryService, "Temperature Telemetry Svc", "Go", "Обрабатывает телеметрию температуры")
 
   Container(temperatureService, "Temperature Service", "Go", "Бизнес‑логика по управлению температурой")
   Container(usersService,       "Users Service",       "Go", "Управление пользователями")
   Container(housesService,      "Houses Service",      "Go", "Управление домами")
-  Container(paymentService,     "Payment Service",     "Go", "Платежи и история")
 
-  ContainerDb(temperatureTelemetryDb, "Temperature Telemetry DB", "ClickHouse", "Хранение телеметрии температуры")
-
-  ContainerDb(temperatureDb, "Temperature DB", "Postgres", "Данные о температурных устройствах")
-  ContainerDb(usersDb,       "Users DB",       "Postgres", "Пользовательские данные")
-  ContainerDb(housesDb,      "Houses DB",      "Postgres", "Информация о домах")
-  ContainerDb(paymentDb,     "Payment DB",     "Postgres", "Данные по платежам")
+  ContainerDb(temperatureDb, "Temperature DB", "Postgres", "Данные о температурных устройствах")
+  ContainerDb(usersDb,       "Users DB",       "Postgres", "Пользовательские данные")
+  ContainerDb(housesDb,      "Houses DB",      "Postgres", "Информация о домах")
 
   Rel(bffClient,     temperatureService, "Запросы управления")
   Rel(bffClient,     usersService,        "Работа с профилем")
   Rel(bffClient,     housesService,       "Просмотр/управление домами")
-  Rel(bffClient,     paymentService,      "Оплата услуг")
-
-  Rel(bffInstaller,  housesService, "Подключение домов")
-  Rel(bffInstaller,  usersService,  "Создание пользователей")
-
-  Rel(iotGateway,    messageQueue,            "Публикует телеметрию")
-  Rel(messageQueue,  temperatureTelemetryService, "Данные о температуре")
-
-  Rel(temperatureTelemetryService, temperatureTelemetryDb, "Сохраняет телеметрию")
 
   Rel(temperatureService, temperatureDb, "CRUD")
   Rel(usersService,       usersDb,       "CRUD")
   Rel(housesService,      housesDb,      "CRUD")
-  Rel(paymentService,     paymentDb,     "CRUD")
 }
 
+Person(user, "User", "Пользователь платформы")
 
-Person(user,      "User",      "Пользователь платформы")
-Person(installer, "Installer", "Технический специалист")
-System_Ext(bankSystem, "Bank System", "External", "Интеграция с банками")
-
-
-Rel(user,      bffClient,    "Использует через мобильное приложение")
-Rel(installer, bffInstaller, "Использует через приложение специалиста")
-Rel(paymentService, bankSystem, "Обрабатывает платежи")
+Rel(user, bffClient, "Использует через мобильное приложение")
 
 @enduml
