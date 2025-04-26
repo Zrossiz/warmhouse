@@ -1,0 +1,29 @@
+@startuml WarmHouse_Context_Diagram
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+title Контекстная диаграмма экосистемы «Тёплый дом / SmartHome»
+
+Person(user,      "Домовладелец", "Регистрация, выбор модулей, управление устройствами и сценариями")
+Person(installer, "Монтажник",    "Помогает подключить оборудование там, где самообслуживание пока невозможно")
+
+
+System_Boundary(she, "SmartHome Ecosystem") {
+    System(she_core, "SmartHome Core", "Набор облачных сервисов, UI и API для управления умными домами")
+}
+
+System_Ext(bank,      "Платёжный шлюз",          "Принимает карты/СПБ; списывает оплату подписки")
+System_Ext(iot_cloud, "Облака производителей",   "AWS IoT, Tuya, etc. — устройства партнёров")
+System_Ext(notify,    "Сервис уведомлений",      "Push/SMS/e‑mail")
+System_Ext(registry,  "Гос.реестр объектов",     "Верификация адреса и владельца (по требованию заказчика)")
+
+Rel(user,      she_core, "Web / Mobile App • Управление, сценарии", "HTTPS/JSON")
+Rel(installer, she_core, "Приложение монтажника • первичная настройка", "HTTPS/JSON")
+
+Rel(she_core, bank,      "Платёжные транзакции и webhooks", "HTTPS")
+Rel(user,      bank,      "Ввод платёжных данных / 3‑D‑Secure", "HTTPS (редирект)")
+
+Rel(she_core, iot_cloud, "Интеграция по стандартным протоколам (MQTT, HTTPS)", "MQTT / REST")
+Rel(she_core, notify,    "Отправка уведомлений пользователям", "HTTPS")
+Rel(she_core, registry,  "Запрос подтверждения собственности (опция)", "HTTPS")
+
+@enduml

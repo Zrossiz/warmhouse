@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package houses;
+
+service HousesService {
+  rpc CreateHouse (CreateHouseRequest) returns (CreateHouseResponse);
+  rpc UpdateHouse (UpdateHouseRequest) returns (UpdateHouseResponse);
+}
+
+message CreateHouseRequest {
+  string name = 1;
+  string address_line = 2;
+  string timezone = 3;
+  string city = 4;
+  double geo_lat = 5;
+  double geo_lon = 6;
+  int64 user_id = 7;
+}
+
+message CreateHouseResponse {
+  int64 house_id = 1;
+}
+
+message UpdateHouseRequest {
+  int64 id = 1;
+  string name = 2;
+  string address_line = 3;
+  string timezone = 4;
+  string city = 5;
+  double geo_lat = 6;
+  double geo_lon = 7;
+}
+
+message UpdateHouseResponse {
+  string status = 1;
+}

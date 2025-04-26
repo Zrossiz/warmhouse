@@ -1,0 +1,29 @@
+@startuml
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+System_Boundary(smartHome, "SmartHome Ecosystem") {
+
+  Container(bffClient,      "BFF Client",           "Node.js/TS",          "Координирует работу клиентских микросервисов")
+
+  Container(temperatureService, "Temperature Service", "Go", "Бизнес‑логика по управлению температурой")
+  Container(usersService,       "Users Service",       "Go", "Управление пользователями")
+  Container(housesService,      "Houses Service",      "Go", "Управление домами")
+
+  ContainerDb(temperatureDb, "Temperature DB", "Postgres", "Данные о температурных устройствах")
+  ContainerDb(usersDb,       "Users DB",       "Postgres", "Пользовательские данные")
+  ContainerDb(housesDb,      "Houses DB",      "Postgres", "Информация о домах")
+
+  Rel(bffClient,     temperatureService, "Запросы управления")
+  Rel(bffClient,     usersService,        "Работа с профилем")
+  Rel(bffClient,     housesService,       "Просмотр/управление домами")
+
+  Rel(temperatureService, temperatureDb, "CRUD")
+  Rel(usersService,       usersDb,       "CRUD")
+  Rel(housesService,      housesDb,      "CRUD")
+}
+
+Person(user, "User", "Пользователь платформы")
+
+Rel(user, bffClient, "Использует через мобильное приложение")
+
+@enduml

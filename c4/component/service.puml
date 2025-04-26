@@ -1,0 +1,18 @@
+@startuml UserService_Component
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+Container_Boundary(userSvc, "User Service (Go)") {
+
+    Component(userController, "UserController", "REST / gRPC Endpoint", "Принимает запросы, маппирует DTO → domain")
+    Component(userDomainService, "UserDomainService", "Business logic", "Валидация, правила, orchestration")
+    Component(userRepository, "UserRepository", "Persistence adapter", "CRUD пользователей в БД (SQL / ORM)")
+
+    Rel(userController,     userDomainService, "calls")
+    Rel(userDomainService,  userRepository,    "uses")
+}
+
+ContainerDb(userDb, "Users DB", "PostgreSQL", "Таблица users, indexы, транзакции")
+
+Rel(userRepository, userDb, "SQL")
+
+@enduml

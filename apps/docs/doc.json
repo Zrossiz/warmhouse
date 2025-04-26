@@ -1,0 +1,170 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "SmartHome BFF API",
+      "version": "1.0.0",
+      "description": "API для координации клиентов в SmartHome"
+    },
+    "paths": {
+      "/users/register": {
+        "post": {
+          "summary": "Регистрация пользователя",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "phone": { "type": "string" },
+                    "username": { "type": "string" },
+                    "password": { "type": "string" }
+                  },
+                  "required": ["phone", "username", "password"]
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": { "description": "Пользователь зарегистрирован" }
+          }
+        }
+      },
+      "/users/login": {
+        "post": {
+          "summary": "Логин пользователя",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "phone": { "type": "string" },
+                    "password": { "type": "string" }
+                  },
+                  "required": ["phone", "password"]
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": { "description": "Успешный вход" },
+            "401": { "description": "Неверные данные" }
+          }
+        }
+      },
+      "/houses": {
+        "post": {
+          "summary": "Создание дома",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "name": { "type": "string" },
+                    "address_line": { "type": "string" },
+                    "timezone": { "type": "string" },
+                    "city": { "type": "string" },
+                    "geo_lat": { "type": "number" },
+                    "geo_lon": { "type": "number" },
+                    "user_id": { "type": "integer" }
+                  },
+                  "required": ["name", "address_line", "timezone", "city", "geo_lat", "geo_lon", "user_id"]
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": { "description": "Дом создан" }
+          }
+        }
+      },
+      "/houses/{id}": {
+        "put": {
+          "summary": "Редактирование дома",
+          "parameters": [
+            {
+              "in": "path",
+              "name": "id",
+              "schema": { "type": "integer" },
+              "required": true
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "name": { "type": "string" },
+                    "address_line": { "type": "string" },
+                    "timezone": { "type": "string" },
+                    "city": { "type": "string" },
+                    "geo_lat": { "type": "number" },
+                    "geo_lon": { "type": "number" }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": { "description": "Дом обновлён" }
+          }
+        }
+      },
+      "/temperature/by-location": {
+        "get": {
+          "summary": "Получение температуры по локации",
+          "parameters": [
+            {
+              "in": "query",
+              "name": "location",
+              "schema": { "type": "string" },
+              "required": true
+            },
+            {
+              "in": "query",
+              "name": "sensorId",
+              "schema": { "type": "integer" }
+            }
+          ],
+          "responses": {
+            "200": { "description": "Температура получена" }
+          }
+        }
+      },
+      "/temperature": {
+        "post": {
+          "summary": "Создание температурного устройства",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "house_id": { "type": "integer" },
+                    "serial_number": { "type": "string" },
+                    "model": { "type": "string" },
+                    "status": { "type": "string" },
+                    "is_active": { "type": "boolean" },
+                    "battery_level": { "type": "number" },
+                    "room_label": { "type": "string" }
+                  },
+                  "required": ["house_id", "serial_number", "model", "status", "is_active", "battery_level", "room_label"]
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": { "description": "Устройство добавлено" }
+          }
+        }
+      }
+    }
+  }
+  
